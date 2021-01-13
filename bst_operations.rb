@@ -8,6 +8,7 @@ class Node
     @right = nil 
   end
 end 
+
 class BST    
   def insertElement(root,key)
     if root==nil
@@ -74,15 +75,16 @@ class BST
       return false
     end
     if key < root.value 
-      return searchElement(root.left)
+      return searchElement(root.left,key)
     elsif key > root.value 
-      return searchElement(root.right)
+      return searchElement(root.right,key)
     else 
       return true
     end    
   end  
+
   def printAllPaths(root,arr)
-    arr.push(root.value)
+    arr.push(root.value.to_i)
     if root.left != nil 
       printAllPaths(root.left,arr)
     end  
@@ -94,6 +96,7 @@ class BST
     end
     arr.pop()     
   end
+
   def minValueNode(node)
     current = node
     while(current.left!=nil)
@@ -101,14 +104,15 @@ class BST
     end
     return current
   end  
+
   def deleteNode(root, key)
-    if root== nil
+    if root == nil
       return root
     end    
-    if key < root.key
-      root.left = deleteNode(root.left, key)
-    elsif(key > root.key)
-      root.right = deleteNode(root.right, key)
+    if(key<root.value)
+      root.left = deleteNode(root.left,key)
+    elsif (key>root.value)
+      root.right = deleteNode(root.right,key)
     else
       if root.left == nil
         temp = root.right
@@ -120,20 +124,23 @@ class BST
         return temp
       end
       temp = minValueNode(root.right)
-      root.key = temp.key
-      root.right = deleteNode(root.right, temp.key)
+      root.value = temp.value
+      root.right = deleteNode(root.right, temp.value)
     end
     return root
   end  
 end  
+
 pre=[]
 File.foreach(ARGV[0]) {|line| pre.push(line.to_i)}
 p pre
 bst=BST.new
 root=nil
+
 for i in pre
   root=bst.insertElement(root,i)
 end
+
 while 1
   command=$stdin.gets
   if(command.chomp=="quit")
@@ -155,15 +162,18 @@ while 1
   elsif command.chomp=="inorder"
     bst.printInorder(root)
   elsif command.chomp=="preorder"
-    bst.printPreorder(root) 
+    bst.printPreorder(root,[]) 
   elsif command.chomp=="postorder"
     bst.printPostorder(root)
   elsif command.chomp=="search"
-    key=gets
-    p bst.search(root,key.chomp.to_i)
+    key=$stdin.gets
+    p bst.searchElement(root,key.chomp.to_i)
   elsif command.chomp=="printallpaths"
     arr=[]
     bst.printAllPaths(root,arr)
+  elsif command.chomp=="delete"
+    key=$stdin.gets
+    root=bst.deleteNode(root,key.chomp.to_i)  
   else 
     p "Invalid Command"
   end
